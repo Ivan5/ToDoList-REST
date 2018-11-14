@@ -14,7 +14,8 @@ class TasksController extends Controller
      */
     public function index()
     {
-        return "This is index page";
+        $tasks = Task::paginate(2);
+        return view('tasks.index')->with('tasks',$tasks);
     }
 
     /**
