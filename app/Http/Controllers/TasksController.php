@@ -65,7 +65,11 @@ class TasksController extends Controller
      */
     public function show($id)
     {
-        //
+        //Search the task with the id
+        $task = Task::find($id);
+        //Return a view
+        return view('tasks.show')->with('task',$task);
+        
         
     }
 
@@ -121,5 +125,11 @@ class TasksController extends Controller
     public function destroy($id)
     {
         //
+        $task = Task::find($id);
+        $task->delete();
+
+        Session::flash('success','Deleted the task successfully');
+
+        return redirect()->route('task.index');
     }
 }
