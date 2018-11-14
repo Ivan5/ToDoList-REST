@@ -14,7 +14,7 @@ class TasksController extends Controller
      */
     public function index()
     {
-        $tasks = Task::paginate(2);
+        $tasks = Task::orderBy('due_date','asc')->paginate(3);
         return view('tasks.index')->with('tasks',$tasks);
     }
 
@@ -54,7 +54,7 @@ class TasksController extends Controller
         //Flash message
         Session::flash('success','Created Task Successfully');
         //Return a Redirect
-        return redirect()->route('task.create');
+        return redirect()->route('task.index');
     }
 
     /**
@@ -66,6 +66,7 @@ class TasksController extends Controller
     public function show($id)
     {
         //
+        
     }
 
     /**
@@ -76,7 +77,9 @@ class TasksController extends Controller
      */
     public function edit($id)
     {
-        //
+        $task = Task::find($id);
+        $task->dueDateFormatting = false;
+        return view('tasks.edit')->with('task',$task);
     }
 
     /**
@@ -89,6 +92,24 @@ class TasksController extends Controller
     public function update(Request $request, $id)
     {
         //
+        //Validate the data
+        $this->validate($request,[
+            'name' => 'required|string|max:255|min:3',
+            'description' => 'required|string|max:10000|min:10',
+            'date' => 'required|date'
+        ]);
+        //Find the related task
+        $task = Task::find($id);
+        //asing the tas data from our requestr
+        $task->name = $request->name;
+        $task->description = $request->description;
+        $task->due_date = $request->date;
+        //save the task
+        $task->save();
+        //Flash message
+        Session::flash('success','Save tje Task Successfully');
+        //Return a Redirect
+        return redirect()->route('task.index');
     }
 
     /**
